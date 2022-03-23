@@ -154,11 +154,28 @@ class TestUserAccessor:
             await store.users.set_remembered(user_word1.user_id, user_word1.word_id)
         await store.users.set_remembered(user_word2.user_id, user_word2.word_id)
         assert (await store.users.count_to_recall_user_words(
-            user_word1.user_id, user_word1.translation_code)) == 1
+            user_word1.user_id, user_word1.translation_code)) == 2
 
         with freeze_time(now() + timedelta(days=2)):
             assert (await store.users.count_to_recall_user_words(
+                user_word1.user_id, user_word1.translation_code)) == 4
+
+    async def test_count_to_recall_multiple(self, store, user_word1, user_word2):
+        with freeze_time(now() - timedelta(days=6)):
+            await store.users.set_remembered(user_word1.user_id, user_word1.word_id)
+
+        with freeze_time(now() - timedelta(days=4)):
+            assert (await store.users.count_to_recall_user_words(
                 user_word1.user_id, user_word1.translation_code)) == 2
+            await store.users.set_shown_original(user_word1.user_id, user_word1.word_id)
+            assert (await store.users.count_to_recall_user_words(
+                user_word1.user_id, user_word1.translation_code)) == 1
+            await store.users.set_shown_translation(user_word1.user_id, user_word1.word_id)
+            assert (await store.users.count_to_recall_user_words(
+                user_word1.user_id, user_word1.translation_code)) == 0
+
+        assert (await store.users.count_to_recall_user_words(
+            user_word1.user_id, user_word1.translation_code)) == 2
 
     async def test_set_remembered(self, store, user_word1, user_word2):
         uw1, uw2 = await store.users.get_user_words(user_word1.user_id,

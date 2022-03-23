@@ -73,13 +73,19 @@ class UserAccessor(BaseAccessor):
 
     async def count_to_recall_user_words(self, user_id: int, translation_code: str) -> int:
         db = self.app.store.database.db
-        return await db.select([db.func.count()]) \
+        n_show_originals = await db.select([db.func.count()]) \
             .where(and_(UserWordModel.user_id == user_id,
                         UserWordModel.translation_code == translation_code,
                         UserWordModel.remembered_at != None,
-                        or_(UserWordModel.next_show_original <= now(),
-                            UserWordModel.next_show_translation <= now()))) \
+                        UserWordModel.next_show_original <= now())) \
             .gino.scalar()
+        n_show_translations = await db.select([db.func.count()]) \
+            .where(and_(UserWordModel.user_id == user_id,
+                        UserWordModel.translation_code == translation_code,
+                        UserWordModel.remembered_at != None,
+                        UserWordModel.next_show_translation <= now())) \
+            .gino.scalar()
+        return n_show_originals + n_show_translations
 
     async def get_user_words(self, user_id: int, translation_code: str) -> list[UserWordDC]:
         user_words: list[UserWordModel] = await UserWordModel.query \
