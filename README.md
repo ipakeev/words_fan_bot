@@ -1,5 +1,7 @@
 <span style="font-size: large; color:forestgreen"> Words Fan </span> bot for telegram.
 
+https://t.me/words_fan_bot
+
 Бот предназначен для изучения иностранных слов. В данный момент - слов на английском языке.
 
 Есть 2 способа добавления слов для изучения:
