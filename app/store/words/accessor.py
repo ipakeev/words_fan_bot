@@ -17,7 +17,8 @@ class WordAccessor(BaseAccessor):
         stmt = insert(WordModel).values(**word.as_dict())
         model: WordModel = await stmt.on_conflict_do_update(
             index_elements=[WordModel.translation_code, WordModel.original],
-            set_=dict(audio_id=stmt.excluded.audio_id)
+            set_=dict(audio_id=stmt.excluded.audio_id,
+                      profile=stmt.excluded.profile)
         ).returning(*WordModel).gino.model(WordModel).first()
         return model.as_dataclass()
 

@@ -51,12 +51,16 @@ class Messenger:
         if delete_previous:
             await self.delete_previous(user_id)
 
-        if audio_id:
-            msg = await self.bot.send_audio(user_id, audio_id, caption=text, reply_markup=keyboard)
-        else:
-            msg = await self.bot.send_message(user_id, text, reply_markup=keyboard)
-        await self.set_previous_msg_info(user_id, msg.message_id, audio_id=audio_id)
-        logger.debug(f"sent msg to {user_id}")
+        try:
+            if audio_id:
+                msg = await self.bot.send_audio(user_id, audio_id, caption=text, reply_markup=keyboard)
+            else:
+                msg = await self.bot.send_message(user_id, text, reply_markup=keyboard)
+            await self.set_previous_msg_info(user_id, msg.message_id, audio_id=audio_id)
+            logger.debug(f"sent msg to {user_id}")
+        except Exception as e:
+            logger.info(text)
+            raise e
 
     async def edit(self,
                    user_id: int,
@@ -76,3 +80,6 @@ class Messenger:
             logger.debug(f"edited msg to {user_id}")
         except MessageNotModified:
             logger.warning("Message is not modified")
+        except Exception as e:
+            logger.info(text)
+            raise e

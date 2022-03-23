@@ -399,10 +399,14 @@ async def recall_words_question(msg: types.CallbackQuery, callback_data: dict):
         text = f"📗 <b>{word.original}</b>\n\n" \
                f"❓❓❓"
 
-    keyboard = keyboards.InlineKeyboard()
-    keyboard.add([
-        ("Назад", cb.MainMenu()),
-        ("Ответ", cb.RecallWordsAnswer(i=callback_data.i)),
+    keyboard = keyboards.InlineKeyboard([
+        [
+            ("Пропустить", cb.RecallWordsQuestion(i=callback_data.i + 1))
+        ],
+        [
+            ("Назад", cb.MainMenu()),
+            ("Ответ", cb.RecallWordsAnswer(i=callback_data.i)),
+        ]
     ])
     await msg.answer()
     await messenger.edit(msg.from_user.id, text, audio_id=word.audio_id, keyboard=keyboard.dump())
