@@ -1,0 +1,21 @@
+database:
+  driver: asyncpg
+  username: postgres
+  password: postgres
+  host: postgres
+  port: 5432
+  database: words
+redis:
+  host: redis
+  port: 6379
+  db: 1
+bot:
+  token: token
+  admin_id: admin_id
+  temp_chat_id: temp_chat_id
+translator:
+  work: True
+  headless: True
+common:
+  queue_worker_sleep: 0.1
+  tasks_gc_sleep: 1

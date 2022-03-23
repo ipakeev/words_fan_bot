@@ -1,0 +1,10 @@
+2022-03-20 19:35:53,333 | INFO | app.py:19 (connect) | connecting to the app
+2022-03-20 19:35:53,741 | INFO | app.py:24 (disconnect) | disconnecting from the app
+2022-03-21 12:03:19,414 | INFO | app.py:19 (connect) | connecting to the app
+2022-03-21 12:03:19,852 | INFO | app.py:24 (disconnect) | disconnecting from the app
+2022-03-22 11:51:33,619 | INFO | app.py:19 (connect) | connecting to the app
+2022-03-22 11:51:34,163 | INFO | app.py:24 (disconnect) | disconnecting from the app
+2022-03-22 11:52:15,207 | INFO | app.py:19 (connect) | connecting to the app
+2022-03-22 11:52:15,639 | INFO | app.py:24 (disconnect) | disconnecting from the app
+2022-03-22 14:02:12,056 | INFO | app.py:19 (connect) | connecting to the app
+2022-03-22 14:02:12,499 | INFO | app.py:24 (disconnect) | disconnecting from the app

@@ -1,0 +1,37 @@
+version: "4.6.1"
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: words
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./volumes:/var/lib/postgresql/data
+    networks:
+      - words
+
+  redis:
+    image: redis:latest
+    environment:
+      REDIS_DB: 1
+    volumes:
+      - ./volumes/redis:/data
+    networks:
+      - words
+
+  server:
+    image: ipakeev/words:latest
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - 8080:8080
+    networks:
+      - words
+
+networks:
+  words:
+    driver: bridge
