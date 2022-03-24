@@ -2,11 +2,12 @@ import asyncio
 import multiprocessing
 import os
 import pathlib
+import time
 import uuid
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
-from gtts import gTTS, gTTSError
+from gtts import gTTS
 
 from app.logger import logger
 
@@ -23,9 +24,8 @@ def proc_generate_audio(foreign_lang_code: str, original: str, filename: str):
     audio = gTTS(original, lang=foreign_lang_code)
     try:
         audio.save(filename)
-    except gTTSError:
-        logger.warning("gTTSError")
-        raise multiprocessing.TimeoutError()
+    except Exception as e:
+        logger.warning(e)
 
 
 class MediaGenerator:
@@ -48,10 +48,14 @@ class MediaGenerator:
             proc.start()
             try:
                 proc.join(timeout=2.0)
-                break
             except multiprocessing.TimeoutError:
                 logger.warning("gTTS process killed, starting new one")
-                proc.kill()
+            proc.kill()
+
+            if not filename.exists() or filename.stat().st_size == 0:
+                logger.warning("gTTS error, file not saved")
+                continue
+            break
 
         yield filename
 
