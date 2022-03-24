@@ -98,7 +98,7 @@ class UserAccessor(BaseAccessor):
         model: UserWordModel = await UserWordModel.update \
             .values(remembered_at=now(),
                     next_show_original=now() + recall_delay[0],
-                    next_show_translation=now() + recall_delay[0]) \
+                    next_show_translation=now() + recall_delay[0] + timedelta(days=1)) \
             .where(and_(UserWordModel.user_id == user_id,
                         UserWordModel.word_id == word_id)) \
             .returning(*UserWordModel) \

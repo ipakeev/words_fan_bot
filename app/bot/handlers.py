@@ -176,14 +176,16 @@ async def add_new_word(msg: types.Message):
     if not word.translations:
         return await msg.answer("Перевод слова не найден.")
 
-    await store.users.add_user_word(UserWordDC(user_id=user_id,
-                                               translation_code=word.translation_code,
-                                               word_id=word.id,
-                                               added_at=now()))
+    current_time = now()
+    user_word = await store.users.add_user_word(UserWordDC(user_id=user_id,
+                                                           translation_code=word.translation_code,
+                                                           word_id=word.id,
+                                                           added_at=current_time))
+    text = "Добавлено слово:" if user_word.added_at == current_time else "Добавлено ранее:"
     keyboard = keyboards.InlineKeyboard([
         [("Удалить сообщение", cb.Delete())],
     ])
-    await msg.answer(f"Добавлено слово:\n\n" + payload.full_word_text(word), reply_markup=keyboard.dump())
+    await msg.answer(f"{text}\n\n" + payload.full_word_text(word), reply_markup=keyboard.dump())
 
 
 @dp.callback_query_handler(cb.Delete().filter())
