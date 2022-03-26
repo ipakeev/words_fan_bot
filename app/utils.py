@@ -2,7 +2,6 @@ import asyncio
 import multiprocessing
 import os
 import pathlib
-import time
 import uuid
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
@@ -43,11 +42,14 @@ class MediaGenerator:
         filename = path / f"{generate_uuid()}.mp3"
 
         while 1:
+            # генерация аудио имеет свойство зависать на 20 секунд, а затем выдавать ошибку,
+            # поэтому запускаем в отдельном процессе и ждём нужное время
+            # к тому же, нам нужна асинхронность
             proc = multiprocessing.Process(target=proc_generate_audio,
                                            args=(foreign_lang_code, original, str(filename)))
             proc.start()
             try:
-                proc.join(timeout=2.0)
+                proc.join(timeout=5.0)
             except multiprocessing.TimeoutError:
                 logger.warning("gTTS process killed, starting new one")
             proc.kill()

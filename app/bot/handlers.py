@@ -25,7 +25,7 @@ async def context_send_sticker(user_id: int, sticker: str):
     try:
         yield
     finally:
-        await msg.delete()
+        await messenger.delete(msg.from_user.id, msg.message_id)
 
 
 async def when_throttled(msg: Union[types.Message, types.CallbackQuery], *args, **kwargs):
@@ -65,7 +65,7 @@ def queue_query(func: Callable[..., Awaitable]):
 @dp.message_handler(text="/start")
 @queue_message
 async def start(msg: types.Message):
-    await msg.delete()
+    await messenger.delete(msg.from_user.id, msg.message_id)
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
     keyboard.add(types.KeyboardButton("/start"))
@@ -191,7 +191,7 @@ async def add_new_word(msg: types.Message):
 @dp.callback_query_handler(cb.Delete().filter())
 @queue_query
 async def delete_msg(msg: types.CallbackQuery):
-    await msg.message.delete()
+    await messenger.delete(msg.from_user.id, msg.message.message_id)
 
 
 @dp.callback_query_handler(cb.SelectNativeLanguage.filter())

@@ -2,7 +2,7 @@ import typing
 from typing import Optional
 
 from aiogram import types, Bot
-from aiogram.utils.exceptions import MessageNotModified, MessageToDeleteNotFound
+from aiogram.utils.exceptions import MessageNotModified, MessageToDeleteNotFound, MessageCantBeDeleted
 
 from app.bot.states import StateAccessor, PreviousMessageInfo
 from app.logger import logger
@@ -38,11 +38,18 @@ class Messenger:
         info = await self.get_previous_msg_info(user_id)
         if info is None:
             return
+        await self.delete(info.user_id, info.message_id)
+        await self.states.delete_previous_msg_info(user_id)
+
+    async def delete(self, user_id: int, message_id: int):
         try:
-            await self.bot.delete_message(info.user_id, info.message_id)
+            await self.bot.delete_message(user_id, message_id)
         except MessageToDeleteNotFound:
             logger.warning("MessageToDeleteNotFound")
-        await self.states.delete_previous_msg_info(user_id)
+        except MessageCantBeDeleted:
+            logger.warning("MessageCantBeDeleted")
+        except Exception as e:
+            logger.exception(e)
 
     async def send(self,
                    user_id: int,
@@ -63,7 +70,7 @@ class Messenger:
             logger.debug(f"sent msg to {user_id}")
         except Exception as e:
             logger.info(text)
-            raise e
+            logger.exception(e)
 
     async def edit(self,
                    user_id: int,
@@ -85,4 +92,4 @@ class Messenger:
             logger.warning("Message is not modified")
         except Exception as e:
             logger.info(text)
-            raise e
+            logger.exception(e)

@@ -40,7 +40,6 @@ class CoroutinesManager(BaseAccessor):
                     logger.warning("InvalidQueryID")
                 except Exception as e:
                     logger.exception(e)
-                    raise e
             await asyncio.sleep(seconds)
 
     def get_queue(self, user_id: int) -> asyncio.Queue:
